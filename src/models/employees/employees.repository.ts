@@ -27,16 +27,22 @@ export class EmployeesRepository {
     }
   }
 
-  async findAll(): Promise<{ data: Employee[] }> {
+  async findAll(page: number = 1, limit: number = 10): Promise<{ data: Employee[]; total: number }> {
     try {
-      const employees = await this.prisma.employee.findMany({
-        include: {
-          orders: true,
-          reviews: true,
-          roles: true,
-        },
-      });
-      return { data: employees };
+      const [employees, total] = await this.prisma.$transaction([
+        this.prisma.employee.findMany({
+          skip: (page - 1) * limit,
+          take: limit,
+          include: {
+            orders: true,
+            reviews: true,
+            roles: true,
+          },
+        }),
+        this.prisma.employee.count(),
+      ]);
+
+      return { data: employees, total };
     } catch (error) {
       logger.error(`Failed to retrieve employees: ${error.message}`);
       throw new InternalServerErrorException('Failed to retrieve employees');

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { EmployeesRepository } from './employees.repository';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -14,8 +14,11 @@ export class EmployeesController {
   }
 
   @Get()
-  async findAll(): Promise<{ data: Employee[] }> {
-    return this.employeesRepository.findAll();
+  async findAll(
+    @Query('page') page: number = 1, 
+    @Query('limit') limit: number = 10, 
+  ): Promise<{ data: Employee[]; total: number }> {
+    return this.employeesRepository.findAll(page, limit);
   }
 
   @Get(':id')
