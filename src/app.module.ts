@@ -11,6 +11,7 @@ import { OrdersModule } from './models/orders/orders.module';
 import { OrderItemModule } from './models/order-item/order-item.module';
 import { EmployeeReviewModule } from './models/employee-review/employee-review.module';
 import { PermissionModule } from './models/permission/permission.module';
+import { RolePermissionModule } from './models/role-permission/role-permission.module';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ dotenv.config();
     OrderItemModule,
     EmployeeReviewModule,
     PermissionModule,
+    RolePermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
