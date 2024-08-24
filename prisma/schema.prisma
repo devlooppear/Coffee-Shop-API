@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  pending
+  completed
+  shipped
+  cancelled
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) @map("id")
+  username  String   @unique @map("username")
+  email     String   @unique @map("email")
+  password  String   @map("password")
+  roleId    Int      @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@map("users")
+}
+
+model Customer {
+  id          Int      @id @default(autoincrement()) @map("id")
+  name        String   @map("name")
+  email       String   @map("email")
+  phoneNumber String?  @map("phone_number")
+  address     String?  @map("address")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  orders Order[] @relation("CustomerOrders")
+
+  @@map("customers")
+}
+
+model Employee {
+  id          Int      @id @default(autoincrement()) @map("id")
+  name        String   @map("name")
+  email       String   @map("email")
+  phoneNumber String?  @map("phone_number")
+  position    String?  @map("position")
+  password    String   @map("password")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  orders  Order[]          @relation("EmployeeOrders")
+  reviews EmployeeReview[]
+  roles   EmployeeRole[]
+
+  @@map("employees")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement()) @map("id")
+  name        String   @map("name")
+  description String?  @map("description")
+  price       Float    @map("price")
+  stock       Int      @map("stock")
+  categoryId  Int      @map("category_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement()) @map("id")
+  customerId  Int         @map("customer_id")
+  employeeId  Int         @map("employee_id")
+  totalAmount Float       @map("total_amount")
+  status      OrderStatus @map("status")
+  orderDate   DateTime    @map("order_date")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  customer Customer    @relation("CustomerOrders", fields: [customerId], references: [id])
+  employee Employee    @relation("EmployeeOrders", fields: [employeeId], references: [id])
+  items    OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement()) @map("id")
+  orderId   Int      @map("order_id")
+  productId Int      @map("product_id")
+  quantity  Int      @map("quantity")
+  price     Float    @map("price")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model EmployeeReview {
+  id           Int      @id @default(autoincrement()) @map("id")
+  employeeId   Int      @map("employee_id")
+  reviewerName String   @map("reviewer_name")
+  rating       Int      @map("rating")
+  comments     String?  @map("comments")
+  reviewDate   DateTime @map("review_date")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+
+  @@map("employee_reviews")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement()) @map("id")
+  name        String   @map("name")
+  description String?  @map("description")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  permissions RolePermission[]
+  employees   EmployeeRole[]
+  User        User[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          Int      @id @default(autoincrement()) @map("id")
+  name        String   @map("name")
+  description String?  @map("description")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           Int      @id @default(autoincrement()) @map("id")
+  roleId       Int      @map("role_id")
+  permissionId Int      @map("permission_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@map("role_permissions")
+}
+
+model EmployeeRole {
+  id         Int      @id @default(autoincrement()) @map("id")
+  employeeId Int      @map("employee_id")
+  roleId     Int      @map("role_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id])
+  role     Role     @relation(fields: [roleId], references: [id])
+
+  @@map("employee_roles")
+}
+
+model Category {
+  id          Int      @id @default(autoincrement()) @map("id")
+  name        String   @map("name")
+  description String?  @map("description")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  products Product[]
+
+  @@map("categories")
+}
