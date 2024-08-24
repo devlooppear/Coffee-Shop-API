@@ -1,31 +1,24 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('employees')
 export class Employee {
-  @PrimaryGeneratedColumn()
+  @ApiProperty({ description: 'Unique identifier for the employee' })
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @ApiProperty({ description: 'Name of the employee', example: 'John Doe' })
   name: string;
 
-  @Column({ type: 'varchar', unique: true, length: 255 })
+  @ApiProperty({ description: 'Email address of the employee', example: 'john.doe@example.com' })
   email: string;
 
-  @Column({ type: 'varchar', length: 15, nullable: true })
+  @ApiProperty({ description: 'Phone number of the employee', nullable: true, example: '+1234567890' })
   phone_number?: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @ApiProperty({ description: 'Position of the employee in the organization', nullable: true, example: 'Software Engineer' })
   position?: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @ApiProperty({ description: 'Date when the employee record was created' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @ApiProperty({ description: 'Date when the employee record was last updated' })
   updatedAt: Date;
 }

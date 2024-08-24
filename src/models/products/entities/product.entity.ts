@@ -1,34 +1,27 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('products')
 export class Product {
-  @PrimaryGeneratedColumn()
+  @ApiProperty({ description: 'Unique identifier for the product' })
   id: number;
 
-  @Column()
+  @ApiProperty({ description: 'Name of the product', example: 'Laptop' })
   name: string;
 
-  @Column({ nullable: true })
+  @ApiProperty({ description: 'Description of the product', example: 'A high-performance laptop' })
   description?: string;
 
-  @Column('decimal')
+  @ApiProperty({ description: 'Price of the product in USD', example: 999.99 })
   price: number;
 
-  @Column()
+  @ApiProperty({ description: 'Available stock for the product', example: 50 })
   stock: number;
 
-  @Column({ name: 'category_id' })
+  @ApiProperty({ description: 'ID of the category to which the product belongs' })
   categoryId: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @ApiProperty({ description: 'Date when the product was created' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @ApiProperty({ description: 'Date when the product was last updated' })
   updatedAt: Date;
 }

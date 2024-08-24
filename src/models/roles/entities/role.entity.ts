@@ -1,25 +1,18 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('roles')
 export class Role {
-  @PrimaryGeneratedColumn()
+  @ApiProperty({ description: 'Unique identifier for the role' })
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @ApiProperty({ description: 'Name of the role', example: 'Admin' })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
+  @ApiProperty({ description: 'Description of the role', required: false })
   description?: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @ApiProperty({ description: 'Date when the role was created' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @ApiProperty({ description: 'Date when the role was last updated' })
   updatedAt: Date;
 }

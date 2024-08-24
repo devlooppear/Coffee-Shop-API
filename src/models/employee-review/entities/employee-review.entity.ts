@@ -1,28 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
-@Entity('employee_reviews')
 export class EmployeeReview {
-  @PrimaryGeneratedColumn()
+  @ApiProperty({ description: 'Unique identifier for the employee review' })
   id: number;
 
-  @Column({ name: 'employee_id' })
+  @ApiProperty({
+    description: 'Unique identifier of the employee being reviewed',
+  })
   employeeId: number;
 
-  @Column({ name: 'reviewer_name' })
+  @ApiProperty({ description: 'Name of the reviewer', example: 'Jane Smith' })
   reviewerName: string;
 
-  @Column()
+  @ApiProperty({ description: 'Rating given to the employee', example: 5 })
   rating: number;
 
-  @Column({ nullable: true })
+  @ApiProperty({
+    description: 'Comments provided by the reviewer',
+    nullable: true,
+    example: 'Excellent performance!',
+  })
   comments?: string;
 
-  @Column({ name: 'review_date' })
+  @ApiProperty({ description: 'Date when the review was conducted' })
   reviewDate: Date;
 
-  @Column({ name: 'created_at', type: 'timestamp' })
+  @ApiProperty({ description: 'Date when the review was created' })
   createdAt: Date;
 
-  @Column({ name: 'updated_at', type: 'timestamp' })
+  @ApiProperty({ description: 'Date when the review was last updated' })
   updatedAt: Date;
 }
